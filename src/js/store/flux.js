@@ -1,42 +1,64 @@
 const getState = ({ getStore, getActions, setStore }) => {
+
+	let user = "juanelissalde";
+	const url = "https://playground.4geeks.com/contact";
+
 	return {
 		store: {
-			demo: [
-				{
-					title: "FIRST",
-					background: "white",
-					initial: "white"
-				},
-				{
-					title: "SECOND",
-					background: "white",
-					initial: "white"
-				}
-			]
+			contacts: []
 		},
 		actions: {
-			// Use getActions to call a function within a fuction
-			exampleFunction: () => {
-				getActions().changeColor(0, "green");
-			},
-			loadSomeData: () => {
-				/**
-					fetch().then().then(data => setStore({ "foo": data.bar }))
-				*/
-			},
-			changeColor: (index, color) => {
-				//get the store
-				const store = getStore();
 
-				//we have to loop the entire demo array to look for the respective index
-				//and change its color
-				const demo = store.demo.map((elm, i) => {
-					if (i === index) elm.background = color;
-					return elm;
-				});
+			// Inicio fincionalidades crear Tarjetas -----------------------------------
+			createCard: () => {
+				fetch(`${url}/agendas/${user}`, {
+					method: "POST",
+					headers: { "Content-Type": "application/json" }
+				})
+					.then((response) => response.json())
+					.then((response) => console.log(response))
+					.catch(error => console.log(error))
+			},
 
-				//reset the global store
-				setStore({ demo: demo });
+			getData: () => {
+				fetch(`${url}/agendas/${user}`)
+					.then((response) => {
+
+						if (response.status == 404) {
+							getActions().createCard()
+							return false
+						}
+						return response.json()
+					})
+					.then(data => { setStore({ contacts: data.contacts }) })
+					.catch(error => console.log(error))
+			},
+
+			deleteCard: (id) => {
+				fetch(`${url}/agendas/${user}/contacts/${id}`, {
+					method: "DELETE",
+					headers: { "Content-Type": "application/json" }
+				})
+					.then((response) => response.json())
+					.then((response) => console.log(response))
+					.catch(error => console.log(error))
+				getActions().getData()
+			},
+
+			createContact: (name, email, phone, address) => {
+				fetch(`${url}/agendas/${user}/contacts`, {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({
+						"name": name,
+						"phone": phone,
+						"email": email,
+						"address": address,
+					  })
+				})
+					.then((response) => response.json())
+					.then((response) => console.log(response))
+					.catch(error => console.log(error))
 			}
 		}
 	};
