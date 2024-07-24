@@ -1,5 +1,4 @@
 const getState = ({ getStore, getActions, setStore }) => {
-
 	let user = "juanelissalde";
 	const url = "https://playground.4geeks.com/contact";
 
@@ -8,8 +7,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 			contacts: []
 		},
 		actions: {
-
-			// Inicio fincionalidades crear Tarjetas -----------------------------------
 			createCard: () => {
 				fetch(`${url}/agendas/${user}`, {
 					method: "POST",
@@ -23,15 +20,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 			getData: () => {
 				fetch(`${url}/agendas/${user}`)
 					.then((response) => {
-
 						if (response.status == 404) {
-							getActions().createCard()
-							return false
+							getActions().createCard();
+							return false;
 						}
-						return response.json()
+						return response.json();
 					})
-					.then(data => { setStore({ contacts: data.contacts }) })
-					.catch(error => console.log(error))
+					.then(data => { setStore({ contacts: data.contacts }); })
+					.catch(error => console.log(error));
 			},
 
 			deleteCard: (id) => {
@@ -39,10 +35,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 					method: "DELETE",
 					headers: { "Content-Type": "application/json" }
 				})
-					.then((response) => response.json())
-					.then((response) => console.log(response))
-					.catch(error => console.log(error))
-				getActions().getData()
+					.then((response) => {
+						if (!response.ok) {
+							throw new Error("Failed to delete contact");
+						}
+						getActions().getData(); // Refresh contact list after deletion
+					})
+					.catch(error => console.log(error));
 			},
 
 			createContact: (name, email, phone, address) => {
@@ -54,11 +53,35 @@ const getState = ({ getStore, getActions, setStore }) => {
 						"phone": phone,
 						"email": email,
 						"address": address,
-					  })
+					})
 				})
-					.then((response) => response.json())
-					.then((response) => console.log(response))
-					.catch(error => console.log(error))
+					.then((response) => {
+						if (!response.ok) {
+							throw new Error("Failed to create contact");
+						}
+						getActions().getData(); // Refresh contact list after creation
+					})
+					.catch(error => console.log(error));
+			},
+
+			editData: (id, name, email, phone, address) => {
+				fetch(`${url}/agendas/${user}/contacts/${id}`, {
+					method: "PUT",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({
+						"name": name,
+						"phone": phone,
+						"email": email,
+						"address": address,
+					})
+				})
+					.then((response) => {
+						if (!response.ok) {
+							throw new Error("Failed to update contact");
+						}
+						getActions().getData(); // Refresh contact list after update
+					})
+					.catch(error => console.log(error));
 			}
 		}
 	};

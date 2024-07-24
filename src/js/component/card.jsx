@@ -17,11 +17,9 @@ export const Card = ({ name, phone, email, address, id, updateId }) => {
                         <button onClick={() => updateId()} type="button" className="btn text-dark border-0 mx-2 my-3 fs-5" data-bs-toggle="modal" data-bs-target="#trashModal">
                             <i className="fas fa-trash-alt"></i>
                         </button>
-                        <Link to="/demo">
-                            <button type="button" className="btn text-dark border-0 mx-2 my-3 fs-5">
-                                <i className="fas fa-pencil-alt"></i>
-                            </button>
-                        </Link>
+                        <button onClick={() => updateId()} type="button" className="btn text-dark border-0 mx-2 my-3 fs-5" data-bs-toggle="modal" data-bs-target="#editModal">
+                            <i className="fas fa-pencil-alt"></i>
+                        </button>
                     </div>
                 </div>
             </div>

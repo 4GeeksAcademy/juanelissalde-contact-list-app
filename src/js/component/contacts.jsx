@@ -4,14 +4,16 @@ import { Card } from "./card.jsx";
 import { Context } from "../store/appContext";
 import { Link } from "react-router-dom";
 import { Modal } from "./modal.jsx";
+import { Editor } from "./editor.jsx";
 
 export const Contacts = () => {
     const { store, actions } = useContext(Context);
-    const [id, setId] = useState(null) /* Declarando estado para guardar id actualizado */
+    const [id, setId] = useState(null);
 
     useEffect(() => {
-        actions.getData()
-    }, [])
+        actions.getData();
+    }, []);
+
     return (
         <>
             {store.contacts.map((item) => (
@@ -26,6 +28,7 @@ export const Contacts = () => {
                 />
             ))}
             <Modal id={id} />
+            <Editor id={id} />
         </>
-    )
-}
+    );
+};
